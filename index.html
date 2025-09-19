@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>世界の「愛してる」</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background: #f0f9ff;
+    }
+    #heart-btn {
+      font-size: 4rem;
+      cursor: pointer;
+      margin-top: 100px;
+      transition: transform 0.2s;
+      position: relative;
+    }
+    #heart-btn:hover {
+      transform: scale(1.2);
+    }
+    .love-text {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2rem;
+      color: #e63946;
+      animation: floatUp 2.5s forwards;
+      white-space: nowrap;
+    }
+    @keyframes floatUp {
+      0%   { opacity: 1; bottom: 60px; }
+      100% { opacity: 0; bottom: 200px; }
+    }
+    #country-info {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌍 世界の「愛してる」</h1>
+  <div id="heart-btn">❤️</div>
+  <div id="country-info"></div>
+  <div id="container"></div>
+
+  <script>
+    let data = [];
+
+    // JSONファイルを読み込む
+    fetch("countries.json")
+      .then(res => res.json())
+      .then(json => { data = json; });
+
+    const btn = document.getElementById("heart-btn");
+    const container = document.getElementById("container");
+    const countryInfo = document.getElementById("country-info");
+
+    btn.addEventListener("click", () => {
+      if (data.length === 0) return;
+
+      const random = data[Math.floor(Math.random() * data.length)];
+
+      // 上に浮かぶテキスト（愛してる）
+      const text = document.createElement("div");
+      text.className = "love-text";
+      text.style.bottom = "60px"; // ハートのすぐ上からスタート
+      text.innerText = random.text;
+      btn.appendChild(text);
+
+      // 下に固定表示する国情報
+      countryInfo.innerText = `${random.flag} ${random.country}（${random.language}）`;
+
+      // 一定時間で削除
+      setTimeout(() => {
+        text.remove();
+      }, 2500);
+    });
+  </script>
+</body>
+</html>
