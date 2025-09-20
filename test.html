@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>世界の「愛してる」</title>
+<style>
+  body {
+    text-align: center;
+    font-family: sans-serif;
+    background: #f0f9ff;
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    font-size: 6vw;
+    margin: 20px 0;
+  }
+  #heart-btn {
+    font-size: 15vw; /* スマホでも大きく見える */
+    cursor: pointer;
+    margin: 10vh 0 5vh;
+    transition: transform 0.2s;
+    position: relative;
+  }
+  #heart-btn:hover {
+    transform: scale(1.2);
+  }
+  .love-text {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 6vw;
+    color: #e63946;
+    animation: floatUp 2.5s forwards;
+    white-space: nowrap;
+  }
+  @keyframes floatUp {
+    0%   { opacity: 1; bottom: 60px; }
+    100% { opacity: 0; bottom: 200px; }
+  }
+  #country-language-info {
+    margin-top: 2vh;
+    font-size: 4vw;
+    color: #333;
+    line-height: 1.5;
+  }
+  #history {
+    margin: 5vh auto;
+    padding: 10px;
+    width: 90%;
+    max-width: 600px;
+    background: #ffffffcc;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: left;
+    font-size: 3.5vw;
+  }
+  #history h2 {
+    font-size: 5vw;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  #history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  #history-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
+  }
+</style>
+</head>
+<body>
+  <h1>🌍 世界の「愛してる」</h1>
+  <div id="heart-btn">❤️</div>
+  <div id="country-language-info"></div>
+
+  <!-- 履歴表示 -->
+  <div id="history">
+    <h2>履歴</h2>
+    <ol id="history-list"></ol>
+  </div>
+
+  <script>
+    let data = [];
+
+    // JSONファイルを読み込む
+    fetch("countries.json")
+      .then(res => res.json())
+      .then(json => { data = json; });
+
+    const btn = document.getElementById("heart-btn");
+    const info = document.getElementById("country-language-info");
+    const historyList = document.getElementById("history-list");
+
+    btn.addEventListener("click", () => {
+      if (data.length === 0) return;
+
+      const random = data[Math.floor(Math.random() * data.length)];
+
+      // 上に浮かぶテキスト（愛してる）
+      const text = document.createElement("div");
+      text.className = "love-text";
+      text.style.bottom = "60px";
+      text.innerText = random.text;
+      btn.appendChild(text);
+
+      // 下に固定表示
+      info.innerHTML = `${random.flag} ${random.country}（${random.language}）<br>「${random.text}」（${random.katakana}）`;
+
+      // 履歴に追加
+      const li = document.createElement("li");
+      li.innerText = `${random.flag} ${random.country}（${random.language}）：「${random.text}」（${random.katakana}）`;
+      historyList.insertBefore(li, historyList.firstChild); // 新しいものを上に追加
+
+      // 一定時間で削除（浮遊する文字だけ）
+      setTimeout(() => {
+        text.remove();
+      }, 2500);
+    });
+  </script>
+</body>
+</html>
